@@ -15,7 +15,7 @@
         </f7-navbar>
 
         <template v-if="Auth == (false || undefined)">
-            <template  v-if="isReg == false">
+            <template  v-if="isAvailable == false">
                 <f7-block strong class="no-margin">
                     <f7-row>
                         <f7-col width="15"><f7-icon style="color:#b29a65;" f7="info_circle"></f7-icon></f7-col>
@@ -43,7 +43,7 @@
                 
            </template>
 
-           <template v-else>  
+           <template  v-if="isReg == false">  
                 <f7-list no-hairlines-md class="margin-vertical-half">
                     <f7-list-input
                         outline
@@ -87,19 +87,24 @@
                
            </template>
 
-           <!-- <template >
+           <template v-else-if="isReg == true">
                 <f7-list no-hairlines-md class="margin-vertical-half">
                     <f7-list-input
                         outline
                         label="Пароль"
                         floating-label
+                        :value="custPwd"
                         type="password"
                         placeholder="Пароль"
                         @input="custPwd = $event.target.value"
                         clear-button
                     ></f7-list-input>
                 </f7-list>
-           </template> -->
+
+                <f7-block v-if="custPwd != '' && custPwd != undefined">
+                    <f7-button fill raised  @click="userAuth()">Вход</f7-button>
+                </f7-block>
+           </template>
 
         
 
@@ -140,30 +145,42 @@ import coins from '../js/userCoins.js'
 export default {
     data () {
         return {
-            Auth: window.localStorage.auth,
-            isReg: false,
-            userCoins: coins,
-            nextBtn: false,
-            custEmail: '',
+            userCoins: coins, // массив монет пользователя
+            Auth: window.localStorage.auth, // наличие авторизации в LocalStorage
+            isReg: undefined, // имеется ли регистрация
+            isAvailable: false, // имеется ли запись в базе
+            nextBtn: false, // показать/скрыть кнопку Продолжить
+            custEmail: '', 
             custPwd: '',
             checkPwd: '',
 
         };
     },
     methods: {
-        /* проверяем email в базе */
+        /** Авторизация пользователя */
+        userAuth () {
+            window.localStorage.setItem('auth', true);
+            this.Auth = true;
+        },
+        /** Проверка email в базе */
         checkEmail () {
             // console.log(this.custEmail)
-            var formData = {book: 10, action: 'check_email', email: this.custEmail}
+            var formData = {book: 10, action: 'get_data', tbl: 'check_email', email: this.custEmail}
+            console.log(formData)
             this.$http
                 .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
                 .then(response => {
-                    console.log(response.body);
-                    this.isReg = true;
-
+                    if (response.body[0][0] != '0') { 
+                        this.isAvailable = true;
+                        this.isReg = true;
+                    } else {
+                        this.isAvailable = true;
+                        this.isReg = false;
+                    }
             }, () => {/*callback функция если промис вернулся с ошибкой*/});
  
         },
+        /** Новая регистрация */
         doReg () {
             
             var formData = {book: 10, action: 'registration', email: this.custEmail, pwd: this.custPwd}
@@ -171,19 +188,20 @@ export default {
                 .post('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
                 .then(response => {
                     console.log(response.body);
-                    this.isReg = true;
+                    this.isAvailable = true;
             }, () => {/*callback функция если промис вернулся с ошибкой*/}); 
             window.localStorage.setItem('auth', true);
             this.Auth = true;
 
         },
-        checkReg () {
-
-        },
+        /** Выход из Аккаунта */
         exitApp () {
             window.localStorage.removeItem('auth');
             this.Auth = undefined;
-            this.isReg = false;
+            this.isReg = undefined,
+            this.isAvailable = false;
+            this.custPwd = '';
+            this.checkPwd ='';
         }
     }
 };

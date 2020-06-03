@@ -130,7 +130,7 @@ export default {
             .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
             .then(response => {
                 this.kinds = response.body;
-                console.log(this.kinds)
+                // console.log(this.kinds)
                 this.viewArr = this.kinds.slice(0, this.countOnPage); // записываем в массив вывода первые countOnPage элементов из общего
                 // console.log(this.kinds)
                 

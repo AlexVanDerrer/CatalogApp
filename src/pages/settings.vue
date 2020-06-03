@@ -11,10 +11,10 @@
         </f7-navbar>
 
         <f7-list>
-            <f7-list-item link="/about/" title="О каталоге"></f7-list-item>
+            <f7-list-item link="/about/" title="О Каталоге"></f7-list-item>
             <!-- <f7-list-item link="/help/" title="Помощь"></f7-list-item> -->
-            <f7-list-item link="/ask/" title="Задать вопрос"></f7-list-item>
-            <f7-list-item :link="`/faq/${id}`" title="Частые вопросы"></f7-list-item>
+            <!-- <f7-list-item link="/ask/" title="Задать вопрос"></f7-list-item> -->
+            <f7-list-item :link="`/faq/${id}`" title="Инструкция"></f7-list-item>
         </f7-list>
 
     </f7-page>

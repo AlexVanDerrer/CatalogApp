@@ -55,7 +55,7 @@
                         <img v-if="s.revers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+s.revers" width="60" />
                         <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />
                         <f7-swipeout-actions right>
-                            <f7-swipeout-button delete confirm-text="Удалить монету из списка?">Удалить</f7-swipeout-button>
+                            <f7-swipeout-button delete confirm-text="Удалить монету из списка?">Не показывать</f7-swipeout-button>
                         </f7-swipeout-actions>
                     </f7-list-item>
                 </template>

@@ -81,19 +81,12 @@
         mounted() {
             this.$f7ready(function(f7) {
                 // console.log(Device);
+                // cordovaApp.init(f7);
 
-                // Device.ios = false;
-                // Device.iphone = false;
-                // Device.android = true;
-                // Device.os = 'android';
-                // Device.osVersion = '6.0'
-                // Device.androidChrome = true;
-                cordovaApp.init(f7);
-
-                // Init cordova APIs (see cordova-app.js)
-                // if (Device.cordova) {
-                //     cordovaApp.init(f7);
-                // }
+                //Init cordova APIs (see cordova-app.js)
+                if (Device.cordova) {
+                    cordovaApp.init(f7);
+                }
             // Call F7 APIs here
             });
         }
