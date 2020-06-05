@@ -4,7 +4,7 @@ import AboutPage from '../pages/about.vue';
 import FormPage from '../pages/form.vue';
 import CollectionPage from '../pages/collection.vue';
 import CatalogPage from '../pages/catalog.vue';
-import ProductPage from '../pages/product.vue';
+import AuthPage from '../pages/auth_view.vue';
 import CoinPage from '../pages/coin.vue';
 import UserCoinPage from '../pages/user_coin.vue';
 import SettingsPage from '../pages/settings.vue';
@@ -77,8 +77,8 @@ var routes = [
     component: CollectionPage,
   },
   {
-    path: '/product/:id/',
-    component: ProductPage,
+    path: '/authview/:email',
+    component: AuthPage,
   },
   {
     path: '/coin/:id/',
