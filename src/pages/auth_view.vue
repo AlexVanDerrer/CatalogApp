@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="authview">
+<f7-page name="authview">
     <f7-navbar title="Вход в аккаунт" back-link="Back"></f7-navbar>
 
     <f7-fab position="right-bottom" slot="fixed" text="" color="#b29a65" >
@@ -80,23 +80,24 @@
 
     </template>
 
-  </f7-page>
+</f7-page>
 </template>
 <script>
 export default {
     data () {
-       return {
-           loading: true,
-           email: '',
-           custPwd: '',
-           checkPwd: '',
-           isReg: undefined, 
-           badPwd: false,
-           hash: '',
+    return {
+        loading: true,
+        email: '',
+        custPwd: '',
+        checkPwd: '',
+        isReg: undefined, 
+        badPwd: false,
+        hash: '',
         
         }
     },
     methods: {
+        /** Авторизация пользователя */
         userAuth () {
             let formData = new FormData();
             formData.append("book", 10);
@@ -115,9 +116,7 @@ export default {
                         console.log(response.body.message);
                         this.badPwd = true;
                     }
-
             }, () => {/*callback функция если промис вернулся с ошибкой*/}); 
-
         },
         /** Новая регистрация */
         doReg () {
@@ -129,17 +128,10 @@ export default {
             this.$http
                 .post('http://conros.cr.local/mobile/backend_mobile_cat.php', formData)
                 .then(response => {
-                    // if (response.body.status)
-
-                    console.log(response.body.status);
-                    console.log(response.body.hash);
                     window.localStorage.setItem('auth', response.body.hash);
                     this.$f7router.navigate('/collection/')
             }, () => {/*callback функция если промис вернулся с ошибкой*/}); 
-            
-
         },
-
     },
     mounted () {
         /** Проверка email в базе */

@@ -20,8 +20,42 @@
             <f7-view id="view-search" name="search" tab url="/search/"></f7-view>
 
             <!-- Settings View -->
-            <f7-view id="view-settings" name="settings" tab url="/settings/"></f7-view>
+            <!-- <f7-view id="view-settings" name="settings" tab url="/settings/"></f7-view> -->
         </f7-views>
+
+        <f7-popup id="add_coin" swipeToClose>
+           <f7-view>
+                <f7-page>
+                    <f7-navbar>
+                        <f7-nav-left>
+                            
+                        </f7-nav-left>
+                        <f7-nav-title>Добавить монету</f7-nav-title>
+                        <f7-nav-right>
+                            <f7-link popup-close>Закрыть</f7-link>
+                        </f7-nav-right>
+                    </f7-navbar>
+                    <template v-if="!getHash">
+                        <f7-block strong class="no-margin">
+                            <f7-row>
+                                <f7-col width="15"><f7-icon style="color:#b29a65;" f7="info_circle"></f7-icon></f7-col>
+                                <f7-col width="85">Чтобы управлять своей коллекциией, необходимо авторизоваться!</f7-col>       
+                            </f7-row>
+                        </f7-block>
+
+                        <f7-block>
+                            <f7-button fill raised href="/collection/">Продолжить</f7-button>
+                        </f7-block>
+                    </template>
+                    <template v-else>
+    
+                    </template>
+
+
+
+                </f7-page>
+            </f7-view>
+        </f7-popup>
 
 
     </f7-app>
@@ -43,7 +77,7 @@
                     // App root data
                     data: function () {
                         return {
-
+                            hash: window.localStorage.auth,
                         };
                     },
 
@@ -74,6 +108,10 @@
             userReg () {
                 this.$f7.loginScreen.close();
             },
+            getHash () {
+                if (this.f7.data.hash) return true
+                return false;
+            }
         },
         /**
          * Хук жизненного цикла. Вызывается сразу после монтирования экземпляра.

@@ -47,12 +47,11 @@
 <f7-list  media-list class="margin-t-b-10">
     <template v-for="(kind) in viewArr"> 
         <f7-list-item
+            swipeout
             :key="kind.id"
             :link="`/coinview/${kind.vid}/${$f7route.params.name}/${type}/${chaptName}`"
         >
         
-        
-
         <span slot="title" class="normal-white-space" v-if="kind.priznaki"><span style="font-weight: bold; color: #b29a65;">{{kind.vid}}.</span> {{kind.priznaki}}</span>
         <span slot="title" class="normal-white-space" v-else><span style="font-weight: bold; color: #b29a65;">{{kind.vid}}.</span> {{title}}</span>
 
@@ -67,7 +66,11 @@
 
         <img v-if="kind.revers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+kind.revers" width="60" />
         <img v-else-if="kind.avers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+kind.avers" width="60" />
-        <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />         
+        <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />
+
+        <!-- <f7-swipeout-actions right>
+            <f7-swipeout-button color="green" @click="addCoin"><f7-icon ios="f7:plus" aurora="f7:plus" md="material:plus"></f7-icon></f7-swipeout-button>
+        </f7-swipeout-actions>          -->
         </f7-list-item>
     </template>
 </f7-list>
@@ -110,13 +113,11 @@ export default {
                         return;
                     }
                     this.viewArr.push(this.kinds[index + i]);
-                }
-                // console.log(this.viewArr);
+                };
                 this.allowInfinite = true;
                 this.loading = false;
-                console.log(this.viewArr);
             }, 1000);
-        },  
+        }, 
     },
     created() {
         
@@ -130,7 +131,6 @@ export default {
             .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
             .then(response => {
                 this.kinds = response.body;
-                // console.log(this.kinds)
                 this.viewArr = this.kinds.slice(0, this.countOnPage); // записываем в массив вывода первые countOnPage элементов из общего
                 // console.log(this.kinds)
                 

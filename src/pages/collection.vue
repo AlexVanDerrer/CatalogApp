@@ -44,24 +44,22 @@
             <f7-list  media-list class="margin-t-b-10">
                 <template v-for="(coin) in userCoins"> 
                     <f7-list-item
-                        :key="coin.id"
-                        :link="`/coin/${coin.id}`"
-                    >
-                    <span slot="title" class="normal-white-space">{{coin.title}}</span>
+                    :key="coin.id"
+                    :link="`/coinview/${coin.vid}/${coin.typ}/${coin.typ_label}/${coin.chapt_name}`"
+                >
+                <span slot="title" class="normal-white-space" v-if="coin.priznaki"><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.priznaki}}</span>
+                <span slot="title" class="normal-white-space" v-else><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.nominal}}</span>
 
-                    <!-- <span slot="subtitle" class="mr-5">subtitle</span> -->
+                <span slot="text" class="mr-5">{{coin.god}}</span>
+                <span slot="text" v-if="coin.dvor" class="mr-5">{{coin.dvor}}</span>
+                <span slot="text" v-if="coin.met" class="mr-5">{{coin.met}}</span>
+                <span slot="text" v-if="coin.gurt" class="mr-5">{{coin.gurt}}</span>
+                <span slot="text" v-if="coin.minz" class="mr-5">{{coin.minz}}</span>
 
-                    <span slot="text" class="mr-5">{{coin.price}}</span>
-                    <!-- 
-                    <span slot="text" v-if="kind.dvor" class="mr-5">{{kind.dvor}}</span>
-                    <span slot="text" v-if="kind.met" class="mr-5">{{kind.met}}</span>
-                    <span slot="text" v-if="kind.gurt" class="mr-5">{{kind.gurt}}</span>
-                    <span slot="text" v-if="kind.minz" class="mr-5">{{kind.minz}}</span> 
-                    -->
-
-                    <img slot="media" :src="coin.cover" width="60" />
-                   
-                    </f7-list-item>
+                <img v-if="coin.revers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+coin.revers" width="60" />
+                <img v-else-if="coin.avers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+coin.avers" width="60" />
+                <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />         
+                </f7-list-item>
                 </template>
             </f7-list>
         </template>
@@ -75,27 +73,33 @@ import coins from '../js/userCoins.js'
 export default {
     data () {
         return {
-            userCoins: coins, // массив монет пользователя
-            Auth: undefined, // наличие авторизации 
+            userCoins: [], // массив монет пользователя
+            Auth: this.$f7.data.hash, // наличие авторизации 
             nextBtn: false, // показать/скрыть кнопку Продолжить
-            custEmail: '', 
+            custEmail: '',
 
         };
     },
     methods: {
-        /** Авторизация пользователя */
-        userAuth () {
-
-        },
-
         /** Выход из Аккаунта */
         exitApp () {
             window.localStorage.removeItem('auth');
             this.Auth = undefined;
         }
     },
-    mounted () {
-        this.Auth = window.localStorage.auth; 
+    mounted () { 
+        if(this.Auth) {
+        var formData = {book: 10, action: 'get_customer_coins', hash: this.Auth}
+        // console.log(formData)
+        this.$http
+            .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
+            .then(response => {
+                if (response.body) { 
+                    console.log(response.body)
+                    this.userCoins = response.body;
+                } 
+        }, () => {/*callback функция если промис вернулся с ошибкой*/});
+        }
     }
 };
 </script>

@@ -56,14 +56,16 @@
             </f7-block>
 
         </f7-card-content>
-        <!-- <f7-card-footer>
-
-        </f7-card-footer> -->
+            <f7-card-footer>
+                 <f7-button fill raised @click="addCoin"><f7-icon ios="f7:plus" aurora="f7:plus" md="material:add"></f7-icon> В коллекцию</f7-button>
+            </f7-card-footer>
         </f7-card>
 
-<f7-fab position="right-bottom" slot="fixed" text="" color="#b29a65" >
-    <f7-link color="white" icon-ios="f7:arrow_left" icon-aurora="f7:arrow_left" icon-md="material:arrow_back" back></f7-link>
-</f7-fab>
+        <f7-fab position="right-bottom" slot="fixed" text="" color="#b29a65" >
+            <f7-link color="white" icon-ios="f7:arrow_left" icon-aurora="f7:arrow_left" icon-md="material:arrow_back" back></f7-link>
+        </f7-fab>
+
+        
     </f7-page>
 </template>
 <script>
@@ -77,6 +79,11 @@ export default {
             label: this.$f7route.params.label, // 1.1
             loading: false
     };
+    },
+    methods: {
+        addCoin () {
+            this.$f7.popup.open('#add_coin');
+        } 
     },
     mounted () {
         // param  ТИП
