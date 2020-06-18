@@ -13,49 +13,19 @@
             <!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
             <f7-view id="view-home" main tab tab-active url="/"></f7-view>
 
+            <!-- search View -->
+            <f7-view id="view-search" name="search" tab url="/search/"></f7-view>
+
             <!-- collection View -->
             <f7-view id="view-collection" name="collection" tab url="/collection/"></f7-view>
 
-            <!-- search View -->
-            <f7-view id="view-search" name="search" tab url="/search/"></f7-view>
+
 
             <!-- Settings View -->
             <!-- <f7-view id="view-settings" name="settings" tab url="/settings/"></f7-view> -->
         </f7-views>
 
-        <f7-popup id="add_coin" swipeToClose>
-           <f7-view>
-                <f7-page>
-                    <f7-navbar>
-                        <f7-nav-left>
-                            
-                        </f7-nav-left>
-                        <f7-nav-title>Добавить монету</f7-nav-title>
-                        <f7-nav-right>
-                            <f7-link popup-close>Закрыть</f7-link>
-                        </f7-nav-right>
-                    </f7-navbar>
-                    <template v-if="!getHash">
-                        <f7-block strong class="no-margin">
-                            <f7-row>
-                                <f7-col width="15"><f7-icon style="color:#b29a65;" f7="info_circle"></f7-icon></f7-col>
-                                <f7-col width="85">Чтобы управлять своей коллекциией, необходимо авторизоваться!</f7-col>       
-                            </f7-row>
-                        </f7-block>
 
-                        <f7-block>
-                            <f7-button fill raised href="/collection/">Продолжить</f7-button>
-                        </f7-block>
-                    </template>
-                    <template v-else>
-    
-                    </template>
-
-
-
-                </f7-page>
-            </f7-view>
-        </f7-popup>
 
 
     </f7-app>
@@ -78,12 +48,14 @@
                     data: function () {
                         return {
                             hash: window.localStorage.auth,
+                            book_id: 10,
+                            mainUrl: 'http://conros.cr.local',
+                            backend: '/mobile/backend_mobile_cat.php',
                         };
                     },
 
                     // App routes
                     routes: routes,
-
 
                     // Input settings
                     input: {
@@ -95,32 +67,32 @@
                         iosOverlaysWebView: true,
                         androidOverlaysWebView: false,
                     },
+                    dialog: {
+                        // change default "OK" button text
+                        buttonOk: 'Да',
+                        buttonCancel: 'Отмена',
+
+                    },
                 },
 
             }
         },
         methods: {
-            alertLoginData() {
-                this.$f7.dialog.alert('Имя пользователя: ' + this.username + '<br>Пароль: ' + this.password, () => {
-                this.$f7.loginScreen.close();
-                });
-            },
-            userReg () {
-                this.$f7.loginScreen.close();
-            },
-            getHash () {
-                if (this.f7.data.hash) return true
-                return false;
-            }
+            // alertLoginData() {
+            //     this.$f7.dialog.alert('Имя пользователя: ' + this.username + '<br>Пароль: ' + this.password, () => {
+            //     this.$f7.loginScreen.close();
+            //     });
+            // },
+            // userReg () {
+            //     this.$f7.loginScreen.close();
+            // },
+
         },
         /**
          * Хук жизненного цикла. Вызывается сразу после монтирования экземпляра.
          */
         mounted() {
             this.$f7ready(function(f7) {
-                // console.log(Device);
-                // cordovaApp.init(f7);
-
                 //Init cordova APIs (see cordova-app.js)
                 if (Device.cordova) {
                     cordovaApp.init(f7);

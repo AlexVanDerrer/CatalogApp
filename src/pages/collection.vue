@@ -1,8 +1,9 @@
 <template>
-    <f7-page name="collection">
+    <!-- ptr - Pull to refresh-->
+    <f7-page name="collection" ptr @ptr:refresh="pageRefresh"> 
         <f7-navbar>
             <f7-nav-left>
-                <img src="http://conros.cr.local/mobile/logo.png" width="45" />
+                <img :src="$f7.data.mainUrl+'/mobile/logo.png'" width="45" />
             </f7-nav-left>
 
             <f7-nav-title>Моя коллекция
@@ -44,22 +45,25 @@
             <f7-list  media-list class="margin-t-b-10">
                 <template v-for="(coin) in userCoins"> 
                     <f7-list-item
-                    :key="coin.id"
-                    :link="`/coinview/${coin.vid}/${coin.typ}/${coin.typ_label}/${coin.chapt_name}`"
-                >
-                <span slot="title" class="normal-white-space" v-if="coin.priznaki"><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.priznaki}}</span>
-                <span slot="title" class="normal-white-space" v-else><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.nominal}}</span>
-
-                <span slot="text" class="mr-5">{{coin.god}}</span>
-                <span slot="text" v-if="coin.dvor" class="mr-5">{{coin.dvor}}</span>
-                <span slot="text" v-if="coin.met" class="mr-5">{{coin.met}}</span>
-                <span slot="text" v-if="coin.gurt" class="mr-5">{{coin.gurt}}</span>
-                <span slot="text" v-if="coin.minz" class="mr-5">{{coin.minz}}</span>
-
-                <img v-if="coin.revers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+coin.revers" width="60" />
-                <img v-else-if="coin.avers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+coin.avers" width="60" />
-                <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />         
-                </f7-list-item>
+                        swipeout
+                        @swipeout:deleted="delCoin(coin.cust_coin_id)"
+                        :key="coin.id"
+                        :link="`/custcoinview/${coin.vid}/${coin.typ}/${coin.typ_label}/${coin.cust_coin_id}`"
+                    >
+                        <span slot="title" class="normal-white-space" v-if="coin.priznaki"><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.priznaki}}</span>
+                        <span slot="title" class="normal-white-space" v-else><span style="font-weight: bold; color: #b29a65;">{{coin.vid}}.</span> {{coin.nominal}}</span>
+                        <span slot="text" class="mr-5">{{coin.god}}</span>
+                        <span slot="text" v-if="coin.dvor" class="mr-5">{{coin.dvor}}</span>
+                        <span slot="text" v-if="coin.met" class="mr-5">{{coin.met}}</span>
+                        <span slot="text" v-if="coin.gurt" class="mr-5">{{coin.gurt}}</span>
+                        <span slot="text" v-if="coin.minz" class="mr-5">{{coin.minz}}</span>
+                        <img v-if="coin.revers != ''" slot="media" :src="$f7.data.mainUrl+'/mobile/catalog_img/10/thumb/'+coin.revers" width="60" />
+                        <img v-else-if="coin.avers != ''" slot="media" :src="$f7.data.mainUrl+'/mobile/catalog_img/10/thumb/'+coin.avers" width="60" />
+                        <img v-else slot="media" :src="$f7.data.mainUrl+'/mobile/nophoto.jpg'" width="60" />
+                        <f7-swipeout-actions right>
+                            <f7-swipeout-button delete confirm-text="Вы уверены, что хотите удалить монету из коллекции?">Удалить</f7-swipeout-button>
+                        </f7-swipeout-actions> 
+                    </f7-list-item>
                 </template>
             </f7-list>
         </template>
@@ -69,15 +73,13 @@
     </f7-page>
 </template>
 <script>
-import coins from '../js/userCoins.js'
 export default {
     data () {
         return {
             userCoins: [], // массив монет пользователя
-            Auth: this.$f7.data.hash, // наличие авторизации 
+            Auth: window.localStorage.auth, // наличие авторизации 
             nextBtn: false, // показать/скрыть кнопку Продолжить
             custEmail: '',
-
         };
     },
     methods: {
@@ -85,29 +87,45 @@ export default {
         exitApp () {
             window.localStorage.removeItem('auth');
             this.Auth = undefined;
+        },
+        /* Свайп вниз для обновления страницы */
+        pageRefresh (done) {
+            setTimeout(() => {
+                this.$f7router.navigate('/collection/', {reloadCurrent: true, ignoreCache  : true})
+            }, 1000);
+        },
+        /* Удаление монеты пользователя из БД */
+        delCoin (id) {
+            let params = {
+                book: this.$f7.data.book_id, 
+                action: 'del_cust_coin', 
+                hash: window.localStorage.auth,
+                id: id,
+            }
+            this.$f7.request.promise
+                .post(this.$f7.data.mainUrl+this.$f7.data.backend, params)
+                .then((response) => {
+                    const toastBottom = this.$f7.toast.create({
+                        text: 'Монета удалена!',
+                        closeTimeout: 2000,
+                    });
+                    toastBottom.open();
+                }, () => {/*callback функция если промис вернулся с ошибкой*/});
         }
     },
     mounted () { 
         if(this.Auth) {
-        var formData = {book: 10, action: 'get_customer_coins', hash: this.Auth}
-        // console.log(formData)
-        this.$http
-            .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: formData})
-            .then(response => {
-                if (response.body) { 
-                    console.log(response.body)
-                    this.userCoins = response.body;
-                } 
-        }, () => {/*callback функция если промис вернулся с ошибкой*/});
+            let formData = {book: this.$f7.data.book_id, action: 'get_customer_coins', hash: this.Auth}
+            // console.log(formData)
+            this.$http
+                .get(this.$f7.data.mainUrl+this.$f7.data.backend, {params: formData})
+                .then(response => {
+                    if (response.body) { 
+                        // console.log(response.body)
+                        this.userCoins = response.body.reverse();
+                    } 
+            }, () => {/*callback функция если промис вернулся с ошибкой*/});
         }
     }
 };
 </script>
-<style scoped>
-    .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-    }
-    .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
-    opacity: 0;
-    }
-</style>

@@ -1,100 +1,60 @@
-# appf7
+# CatalogConros
 
-## Framework7 CLI Options
+## NPM Скрипты
 
-Framework7 app created with following options:
+* 🔥 `start` - Запустить webpack-dev-server
+* 🔧 `dev` - Запустить webpack-dev-server
+* 🔧 `build-dev` - сборка веб-приложения в режиме разработки (более быстрая сборка без минимизации и оптимизации)
+* 🔧 `build-prod` - сборка для продакшн
+* 📱 `build-dev-cordova` - сборка приложения cordova в режиме разработки
+* 📱 `build-prod-cordova` - сборка приложения cordova для продакшн
+* 📱 `build-dev-cordova-ios` - сборка приложения cordova iOS в режиме разработки
+* 📱 `build-prod-cordova-ios` - сборка приложения cordova iOS для продакшн
+* 📱 `build-dev-cordova-android` - сборка приложения cordova Android в режиме разработки
+* 📱 `build-prod-cordova-android` - сборка приложения cordova Android для продакшн
+
+### Пример использования
+```
+npm run [NameScript]
 
 ```
-{
-  "cwd": "D:\\OSPanel\\domains\\testf7",
-  "type": [
-    "cordova"
-  ],
-  "name": "appf7",
-  "framework": "vue",
-  "template": "tabs",
-  "bundler": "webpack",
-  "cssPreProcessor": "less",
-  "theming": {
-    "customColor": false,
-    "color": "#007aff",
-    "darkTheme": true,
-    "iconFonts": true,
-    "fillBars": false
-  },
-  "customBuild": false,
-  "webpack": {
-    "developmentSourceMap": true,
-    "productionSourceMap": true,
-    "hashAssets": false,
-    "preserveAssetsPaths": false,
-    "inlineAssets": true
-  },
-  "pkg": "io.framework7.myapp",
-  "cordova": {
-    "folder": "cordova",
-    "platforms": [
-      "ios",
-      "android"
-    ],
-    "plugins": [
-      "cordova-plugin-statusbar",
-      "cordova-plugin-keyboard",
-      "cordova-plugin-splashscreen",
-      "cordova-plugin-wkwebview-file-xhr"
-    ]
-  }
-}
-```
-
-## NPM Scripts
-
-* 🔥 `start` - run development server
-* 🔧 `dev` - run development server
-* 🔧 `build-dev` - build web app using development mode (faster build without minification and optimization)
-* 🔧 `build-prod` - build web app for production
-* 📱 `build-dev-cordova` - build cordova app using development mode (faster build without minification and optimization)
-* 📱 `build-prod-cordova` - build cordova app
-* 📱 `build-dev-cordova-ios` - build cordova iOS app using development mode (faster build without minification and optimization)
-* 📱 `build-prod-cordova-ios` - build cordova iOS app
-* 📱 `build-dev-cordova-android` - build cordova Android app using development mode (faster build without minification and optimization)
-* 📱 `build-prod-cordova-android` - build cordova Android app
+Результат сборки веб-приложения с помощью WebPack помещается в каталог `/www` в корне каталога приложения
 
 ## WebPack
 
-There is a webpack bundler setup. It compiles and bundles all "front-end" resources. You should work only with files located in `/src` folder. Webpack config located in `build/webpack.config.js`.
+Существует config пакета webpack bundle. Он компилирует и связывает все "front-end" ресурсы. 
+Webpack config находится в `build/webpack.config.js`.
+Вся разработка ведется только в каталоге `/src`. 
 
-Webpack has specific way of handling static assets (CSS files, images, audios). You can learn more about correct way of doing things on [official webpack documentation](https://webpack.js.org/guides/asset-management/).
 ## Cordova
 
-Cordova project located in `cordova` folder. You shouldn't modify content of `cordova/www` folder. Its content will be correctly generated when you call `npm run cordova-build-prod`.
+Проект Cordova находится в каталоге  `/cordova`. 
+Чтобы начать сборку приложения под android, необходимо переместить содержимое и каталога `/www` в каталог `/cordova/www` 
+Добавьте флаг `--release` для сборки релизной версии
 
-
-
-## Assets
-
-Assets (icons, splash screens) source images located in `assets-src` folder. To generate your own icons and splash screen images, you will need to replace all assets in this directory with your own images (pay attention to image size and format), and run the following command in the project directory:
-
+## For Example
+### ведем разработку
 ```
-framework7 generate-assets
+npm run dev
 ```
-
-Or launch UI where you will be able to change icons and splash screens:
-
+### Собираем билд 
 ```
-framework7 generate-assets --ui
+npm run build-prod
 ```
 
-## Documentation & Resources
+### Собираем приложение Cordova Android
+```
+/cordova> cordova build android 
+```
+
+## Документация & Ресурсы
+
+* [Vue.js](https://ru.vuejs.org/v2/guide/)
 
 * [Framework7 Core Documentation](https://framework7.io/docs/)
 * [Framework7 Vue Documentation](https://framework7.io/vue/)
-
-
 * [Framework7 Icons Reference](https://framework7.io/icons/)
 * [Community Forum](https://forum.framework7.io)
 
-## Support Framework7
-
-Love Framework7? Support project by donating or pledging on patreon:
-https://patreon.com/vladimirkharlampidi
+* [Cordova Documentation](https://cordova.apache.org/docs/en/latest/)
+* [Webpack Getting Started](https://webpack.js.org/guides/getting-started/)

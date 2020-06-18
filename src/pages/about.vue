@@ -3,10 +3,10 @@
         <f7-navbar title="О каталоге" back-link></f7-navbar>
         <f7-block strong class="no-margin">
             <f7-swiper pagination>
-                <f7-swiper-slide><img src="http://conros.cr.local/mobile/about_img/cat_img_1.jpg" width="80%" /></f7-swiper-slide>
-                <f7-swiper-slide><img src="http://conros.cr.local/mobile/about_img/cat_img_2.jpg" width="80%" /></f7-swiper-slide>
-                <f7-swiper-slide><img src="http://conros.cr.local/mobile/about_img/cat_img_3.jpg" width="80%" /></f7-swiper-slide>
-                <f7-swiper-slide><img src="http://conros.cr.local/mobile/about_img/cat_img_4.jpg" width="80%" /></f7-swiper-slide>
+                <f7-swiper-slide><img :src="$f7.data.mainUrl+'/mobile/about_img/cat_img_1.jpg'" width="80%" /></f7-swiper-slide>
+                <f7-swiper-slide><img :src="$f7.data.mainUrl+'/mobile/about_img/cat_img_2.jpg'" width="80%" /></f7-swiper-slide>
+                <f7-swiper-slide><img :src="$f7.data.mainUrl+'/mobile/about_img/cat_img_3.jpg'" width="80%" /></f7-swiper-slide>
+                <f7-swiper-slide><img :src="$f7.data.mainUrl+'/mobile/about_img/cat_img_4.jpg'" width="80%" /></f7-swiper-slide>
             </f7-swiper>
         </f7-block>
 

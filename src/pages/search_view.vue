@@ -7,14 +7,11 @@
     >
         <f7-navbar >
             <f7-nav-left>
-                <img src="http://conros.cr.local/mobile/logo.png" width="45" />
+                <img :src="$f7.data.mainUrl+'/mobile/logo.png'" width="45" />
             </f7-nav-left>
 
             <f7-nav-title>Поиск монет</f7-nav-title>
 
-            <!-- <f7-nav-right>
-                <f7-link v-show="showNavButton" icon-ios="f7:gear" icon-aurora="f7:gear" icon-md="material:filter_alt" raised popup-open="#search-popup"></f7-link>
-            </f7-nav-right> -->
         </f7-navbar>
 
         <f7-fab position="right-bottom" slot="fixed" text="" color="#b29a65">
@@ -52,8 +49,8 @@
                         <span slot="title" class="normal-white-space" ><b style="color:#b29a65; margin-right:10px;">{{s.typ_label+'/'+s.vid}}</b> {{s.nominal}}</span>
                         <span slot="text" class="normal-white-space"  v-if="s.priznaki">{{s.priznaki}}</span>
                         <span slot="footer" class="normal-white-space" >{{s.god+' '+s.met}}</span>
-                        <img v-if="s.revers != ''" slot="media" :src="'http://conros.cr.local/mobile/catalog_img/10/thumb/'+s.revers" width="60" />
-                        <img v-else slot="media" :src="'http://conros.cr.local/mobile/nophoto.jpg'" width="60" />
+                        <img v-if="s.revers != ''" slot="media" :src="$f7.data.mainUrl+'/mobile/catalog_img/10/thumb/'+s.revers" width="60" />
+                        <img v-else slot="media" :src="$f7.data.mainUrl+'/mobile/nophoto.jpg'" width="60" />
                         <f7-swipeout-actions right>
                             <f7-swipeout-button delete confirm-text="Удалить монету из списка?">Не показывать</f7-swipeout-button>
                         </f7-swipeout-actions>
@@ -68,7 +65,7 @@
                 <f7-page>
                     <f7-navbar>
                         <f7-nav-left>
-                            <f7-link v-if="this.nom || this.god || this.met" @click="clearSearch">Сброс</f7-link>
+                            <f7-link v-if="this.query_param_nom || this.query_param_god || this.query_param_met" @click="clearSearch">Сброс</f7-link>
                         </f7-nav-left>
                         <f7-nav-title>Фильтры</f7-nav-title>
                         <f7-nav-right>
@@ -82,7 +79,7 @@
                         <f7-list-item
                             title="Номинал" 
                             smart-select
-                            :after="nom" 
+                            :after="query_param_nom" 
                             :smart-select-params="{
                                     openIn: 'sheet', 
                                     closeOnSelect: true, 
@@ -91,7 +88,7 @@
                         
                                 }"
                         >
-                            <select name="nominal" v-model="nom">
+                            <select name="nominal" v-model="query_param_nom">
                                 <option 
                                     v-for="(nominal) in nominals"
                                     :key="nominal.id"
@@ -103,7 +100,7 @@
                         <!-- Год  -->
                         <f7-list-item  
                             title="Год"
-                            :after="god" 
+                            :after="query_param_god" 
                             smart-select 
                             :smart-select-params="{
                                 openIn: 'sheet', 
@@ -112,7 +109,7 @@
                                 setValueText: false
                             }"
                         >
-                            <select name="god" v-model="god">
+                            <select name="god" v-model="query_param_god">
                                 <option 
                                     v-for="(year) in years"
                                     :key="year.god"
@@ -125,7 +122,7 @@
                         <f7-list-item
                             title="Металл" 
                             smart-select
-                            :after="met" 
+                            :after="query_param_met" 
                             :smart-select-params="{
                                 openIn: 'sheet', 
                                 closeOnSelect: true, 
@@ -133,7 +130,7 @@
                                 setValueText: false
                             }"
                         >
-                            <select name="metal" v-model="met">
+                            <select name="metal" v-model="query_param_met">
                                 <option 
                                     v-for="(metal) in metals"
                                     :key="metal.id"
@@ -166,32 +163,37 @@
 export default {
     data () {
         return {
-            nom: '',
-            god: '',
-            met: '',
-            metals: [],
-            nominals: [],
-            years: [],
-            searchArr: [],
+            /* параметры выбранные пользователем для запроса */
+            query_param_nom: '', 
+            query_param_god: '',
+            query_param_met: '',
+            /* end */
+            metals: [], // массив для smartSelect 
+            nominals: [], // -//-
+            years: [], // -//-
+            searchArr: [], // общий массив
+            viewArr: [], // массив вывода
             countOnPage: 7, // количество строк для infiniteScroll
-            showNoResult: false,
-            showCountResult: false,
-            showPreloader: false,
+            showNoResult: false, // сообщение Ничего не найдено
+            showCountResult: false, // количество строк в общем массиве
+            showPreloader: false, // отключить прелоадер
             allowInfinite: true, // разрешить бесконечную прокрутку
-            viewArr: [],
-            noParams: true,
-
+            noParams: true, // сообщение не выбран фильтр
         }
     },
     methods: {
         getSearch () {
-            // param  Номинал
-            // patam2 Год
-            // param3 Металл
-            var searchArr = {book: 10, action: 'get_data', tbl: 'search', param: this.nom, param2: this.god, param3: this.met}
+            var searchArr = {
+                book: this.$f7.data.book_id, 
+                action: 'get_data', 
+                tbl: 'search', 
+                param: this.query_param_nom, // param  Номинал
+                param2: this.query_param_god,  // patam2 Год
+                param3: this.query_param_met  // param3 Металл
+            }
             // console.log(searchArr);
             this.$http
-                .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: searchArr})
+                .get(this.$f7.data.mainUrl+this.$f7.data.backend, {params: searchArr})
                 .then(response => {  // обрабатываем промис
                         if (this.viewArr != []) this.searchArr = this.viewArr = []; //чистим массив поиска, если ранее были результаты
                         this.showPreloader = true; // показать прелоадер
@@ -224,9 +226,9 @@ export default {
             this.showCountResult = false;
             this.showNoResult = false;
             this.showPreloader = false;
-            this.nom = '';
-            this.god = '';
-            this.met = '';
+            this.query_param_nom = '';
+            this.query_param_god = '';
+            this.query_param_met = '';
         },
         infiniteScroll() {
             if (this.allowInfinite == false) return; 
@@ -247,23 +249,23 @@ export default {
         },
     },
     mounted() {
-        var metalArr = {book: 10, action: 'get_data', tbl: 'metal'}
+        var metalArr = {book: this.$f7.data.book_id, action: 'get_data', tbl: 'metal'}
         this.$http
-            .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: metalArr})
+            .get(this.$f7.data.mainUrl+this.$f7.data.backend, {params: metalArr})
             .then(response => {
                 this.metals = response.body;
         });
-        var nominalArr = {book: 10, action: 'get_data', tbl: 'nominal'}
+        var nominalArr = {book: this.$f7.data.book_id, action: 'get_data', tbl: 'nominal'}
         this.$http
-            .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: nominalArr})
+            .get(this.$f7.data.mainUrl+this.$f7.data.backend, {params: nominalArr})
             .then(response => {
                 //console.log(response.body);
                 this.nominals = response.body;
                 // console.log(this.nominals);
         });
-        var years = {book: 10, action: 'get_data', tbl: 'year'}
+        var years = {book: this.$f7.data.book_id, action: 'get_data', tbl: 'year'}
         this.$http
-            .get('http://conros.cr.local/mobile/backend_mobile_cat.php', {params: years})
+            .get(this.$f7.data.mainUrl+this.$f7.data.backend, {params: years})
             .then(response => {
                 //console.log(response.body);
                 this.years = response.body;

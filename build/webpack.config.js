@@ -166,8 +166,9 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
       'process.env.TARGET': JSON.stringify(target),
+      'SITE_URL' : '/backend_mobile_cat.php',
     }),
-    new VueLoaderPlugin(),
+    new VueLoaderPlugin(), 
     ...(env === 'production' ? [
       new OptimizeCSSPlugin({
         cssProcessorOptions: {

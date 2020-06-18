@@ -5,7 +5,7 @@
             <f7-nav-title title="Информация"></f7-nav-title>
 
             <f7-nav-right>
-                <img src="http://conros.cr.local/mobile/logo.png" width="45" />
+                <img :src="$f7.data.mainUrl+'/mobile/logo.png'" width="45" />
             </f7-nav-right>
 
         </f7-navbar>
